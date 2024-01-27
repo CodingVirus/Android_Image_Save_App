@@ -27,45 +27,41 @@ class MainActivity : AppCompatActivity() {
 
     var items = mutableListOf <ImageResult>()
 
+    private val frag1 = ImageSearchFragment()
+    private val frag2 = MyImageFragment()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        setFragment(ImageSearchFragment())
+        supportFragmentManager.commit {
+            add(R.id.frame_layout, frag1)
+            add(R.id.frame_layout, frag2)
+            show(frag1)
+            hide(frag2)
+        }
 
         with(binding) {
             btnSearchImageFragment.setOnClickListener {
-                setFragment(ImageSearchFragment())
+                setFragment(frag1)
             }
             btnMyImageFragment.setOnClickListener {
-                setFragment(MyImageFragment())
+                setFragment(frag2)
             }
         }
-
-        communicateNetWork()
-
     }
 
     private fun setFragment(frag: Fragment) {
         supportFragmentManager.commit{
-            replace(R.id.frame_layout, frag)
             setReorderingAllowed(true)
             addToBackStack("")
+            if (frag == frag1) {
+                show(frag1)
+                hide(frag2)
+            } else {
+                show(frag2)
+                hide(frag1)
+            }
         }
-    }
-
-
-    private fun communicateNetWork() = lifecycleScope.launch {
-        val test = NetWorkClient.api.getImage(Constants.AUTH_HEADER, "아이브 리즈", "accuracy", 1, 5).docs
-
-        items = test!!
-
-
-        runOnUiThread {
-            Glide.with(this@MainActivity)
-                .load(items[2].imageUrl)
-                .into(binding.ivTest)
-        }
-
     }
 }
