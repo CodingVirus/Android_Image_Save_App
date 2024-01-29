@@ -1,5 +1,6 @@
 package com.example.imagesaveapp.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,8 +14,10 @@ import com.example.imagesaveapp.Constants
 import com.example.imagesaveapp.adapter.ImageSearchAdpater
 import com.example.imagesaveapp.data.ImageResult
 import com.example.imagesaveapp.databinding.FragmentImageSearchBinding
+import com.example.imagesaveapp.datainterface.FragmentDataListener
 import com.example.imagesaveapp.retrofit.NetWorkClient
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -24,10 +27,19 @@ class ImageSearchFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var listener: FragmentDataListener? = null
     private val binding by lazy { FragmentImageSearchBinding.inflate(layoutInflater) }
 
     private var items = mutableListOf <ImageResult>()
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is FragmentDataListener) {
+            listener = context
+        } else {
+            throw RuntimeException("Error!")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -40,17 +52,6 @@ class ImageSearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        view?.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        Log.i("Minyong", "Test!!")
-                    }
-                }
-                return true
-            }
-
-        })
         return binding.root
     }
 
@@ -77,7 +78,10 @@ class ImageSearchFragment : Fragment() {
 
         items = test!!
         items.sortByDescending { it.datetime }
-        binding.recyclerView.adapter = ImageSearchAdpater(items)
+
+        val adpater = ImageSearchAdpater(items)
+
+        binding.recyclerView.adapter = adpater
     }
 
     companion object {

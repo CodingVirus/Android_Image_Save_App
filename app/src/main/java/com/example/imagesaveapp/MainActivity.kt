@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
 import android.util.Log
+import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -13,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.imagesaveapp.data.ImageResult
 import com.example.imagesaveapp.databinding.ActivityMainBinding
+import com.example.imagesaveapp.datainterface.FragmentDataListener
 import com.example.imagesaveapp.fragments.ImageSearchFragment
 import com.example.imagesaveapp.fragments.MyImageFragment
 import com.example.imagesaveapp.retrofit.NetWorkClient
@@ -21,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FragmentDataListener {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
@@ -63,5 +65,9 @@ class MainActivity : AppCompatActivity() {
                 hide(frag1)
             }
         }
+    }
+
+    override fun onDataReceived(data: ImageView) {
+
     }
 }
