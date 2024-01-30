@@ -4,8 +4,10 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
+import android.os.Parcelable
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -26,29 +28,22 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity(), FragmentDataListener {
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-    var items = mutableListOf <ImageResult>()
-
+    private var items = ArrayList<ImageResult>()
     private val frag1 = ImageSearchFragment()
-    private val frag2 = MyImageFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        supportFragmentManager.commit {
-            add(R.id.frame_layout, frag1)
-            add(R.id.frame_layout, frag2)
-            show(frag1)
-            hide(frag2)
-        }
+        setFragment(frag1)
 
         with(binding) {
             btnSearchImageFragment.setOnClickListener {
                 setFragment(frag1)
             }
             btnMyImageFragment.setOnClickListener {
-                setFragment(frag2)
+                val frag = MyImageFragment.newInstance(items)
+                setFragment(frag)
             }
         }
     }
@@ -57,17 +52,23 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
         supportFragmentManager.commit{
             setReorderingAllowed(true)
             addToBackStack("")
-            if (frag == frag1) {
-                show(frag1)
-                hide(frag2)
-            } else {
-                show(frag2)
-                hide(frag1)
-            }
+            replace(R.id.frame_layout, frag)
         }
     }
 
-    override fun onDataReceived(data: ImageView) {
+    override fun onDataReceived(data: ImageResult) {
+        items.add(data)
+        saveData()
+    }
 
+    private fun saveData() {
+        val pref = getSharedPreferences("pref", 0)
+        val edit = pref.edit()
+       // edit.putString("name", items)
+    }
+
+    private fun loadData() {
+        val pref = getSharedPreferences("pref", 0)
+        //testItems = pref.getString("name", "")
     }
 }

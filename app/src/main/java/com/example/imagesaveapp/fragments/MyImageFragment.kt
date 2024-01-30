@@ -1,27 +1,29 @@
 package com.example.imagesaveapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.imagesaveapp.MainActivity
 import com.example.imagesaveapp.R
+import com.example.imagesaveapp.adapter.ImageSearchAdpater
+import com.example.imagesaveapp.data.ImageResult
 import com.example.imagesaveapp.databinding.FragmentMyImageBinding
+import com.example.imagesaveapp.datainterface.FragmentDataListener
 
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class MyImageFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
+    private var param1 = ArrayList<ImageResult>()
 
     private val binding by lazy { FragmentMyImageBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            param1 = it.getParcelableArrayList(ARG_PARAM1)!!
         }
     }
 
@@ -34,15 +36,17 @@ class MyImageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.recyclerView.adapter = ImageSearchAdpater(param1)
     }
+
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: ArrayList<ImageResult>) =
             MyImageFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelableArrayList(ARG_PARAM1, param1)
                 }
             }
     }

@@ -16,11 +16,9 @@ import com.example.imagesaveapp.databinding.FragmentImageSearchBinding
 import com.example.imagesaveapp.databinding.ImageItemBinding
 import kotlinx.coroutines.flow.combine
 
-class ImageSearchAdpater(private val list: MutableList<ImageResult>) : RecyclerView.Adapter<ImageSearchAdpater.Holder>() {
+class ImageSearchAdpater(private val list: ArrayList<ImageResult>) : RecyclerView.Adapter<ImageSearchAdpater.Holder>() {
     interface ItemClick {
-        fun onClick(view: View, position: Int) {
-
-        }
+        fun onClick(view: View, position: Int, data: ImageResult)
     }
 
     var itemClick : ItemClick? = null
@@ -55,9 +53,8 @@ class ImageSearchAdpater(private val list: MutableList<ImageResult>) : RecyclerV
                 if (holder.like.visibility == View.INVISIBLE)
                     holder.like.visibility = VISIBLE
                 else holder.like.visibility = View.INVISIBLE
-                //itemClick?.onClick(it, position)
+                itemClick?.onClick(it, position, this)
             }
-
         }
     }
 }

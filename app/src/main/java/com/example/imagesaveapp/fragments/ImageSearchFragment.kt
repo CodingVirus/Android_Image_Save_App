@@ -22,7 +22,6 @@ import java.lang.RuntimeException
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-
 class ImageSearchFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
@@ -30,7 +29,7 @@ class ImageSearchFragment : Fragment() {
     private var listener: FragmentDataListener? = null
     private val binding by lazy { FragmentImageSearchBinding.inflate(layoutInflater) }
 
-    private var items = mutableListOf <ImageResult>()
+    private var items = ArrayList <ImageResult>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -72,17 +71,23 @@ class ImageSearchFragment : Fragment() {
         })
     }
 
-
     private fun communicateNetWork(query: String?) = lifecycleScope.launch {
         val test = NetWorkClient.api.getImage(Constants.AUTH_HEADER, query, "accuracy", 1, 20).docs
 
         items = test!!
         items.sortByDescending { it.datetime }
 
-        val adpater = ImageSearchAdpater(items)
+        val adapter = ImageSearchAdpater(items)
+        adapter.itemClick = object : ImageSearchAdpater.ItemClick {
+            override fun onClick(view: View, position: Int, data: ImageResult) {
+                listener?.onDataReceived(data)
 
-        binding.recyclerView.adapter = adpater
+            }
+        }
+
+        binding.recyclerView.adapter = adapter
     }
+
 
     companion object {
         @JvmStatic

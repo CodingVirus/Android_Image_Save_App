@@ -1,6 +1,8 @@
 package com.example.imagesaveapp.data
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class SearchImage(val response: SearchImageResponse)
 
@@ -8,9 +10,10 @@ data class SearchImageResponse(
     @SerializedName("meta")
     val meta: SearchMeta?,
     @SerializedName("documents")
-    val docs: MutableList<ImageResult>?
+    val docs: ArrayList<ImageResult>?
 )
 
+@Parcelize
 data class ImageResult(
     @SerializedName("collection")
     val collection: String,
@@ -28,7 +31,7 @@ data class ImageResult(
     val docUrl: String,
     @SerializedName("datetime")
     val datetime: String,
-)
+) : Parcelable
 
 data class SearchMeta(
     @SerializedName("total_count")
