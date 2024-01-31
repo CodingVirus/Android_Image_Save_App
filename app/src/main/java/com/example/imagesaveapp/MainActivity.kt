@@ -20,6 +20,10 @@ import com.example.imagesaveapp.datainterface.FragmentDataListener
 import com.example.imagesaveapp.fragments.ImageSearchFragment
 import com.example.imagesaveapp.fragments.MyImageFragment
 import com.example.imagesaveapp.retrofit.NetWorkClient
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParseException
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +39,7 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        loadData()
         setFragment(frag1)
 
         with(binding) {
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
                 setFragment(frag1)
             }
             btnMyImageFragment.setOnClickListener {
+                loadData()
                 val frag = MyImageFragment.newInstance(items)
                 setFragment(frag)
             }
@@ -62,13 +68,29 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
     }
 
     private fun saveData() {
-        val pref = getSharedPreferences("pref", 0)
+        val pref = getSharedPreferences(Constants.PREFERENCE_KEY, 0)
         val edit = pref.edit()
-       // edit.putString("name", items)
+
+        val gson = Gson()
+        val json = gson.toJson(items)
+
+        //Log.i("Minyong Json", json)
+
+        edit.putString(Constants.DATA_KEY, json)
+        edit.apply()
     }
 
     private fun loadData() {
-        val pref = getSharedPreferences("pref", 0)
-        //testItems = pref.getString("name", "")
+        val pref = getSharedPreferences(Constants.PREFERENCE_KEY, 0)
+        if (pref.contains(Constants.DATA_KEY)) {
+            val gson = Gson()
+            val json = pref.getString(Constants.DATA_KEY, "")
+            try {
+                val typeToken = object : TypeToken<ArrayList<ImageResult>>() {}.type
+                items = gson.fromJson(json, typeToken)
+            } catch (e: JsonParseException) {
+                e.printStackTrace()
+            }
+        }
     }
 }
