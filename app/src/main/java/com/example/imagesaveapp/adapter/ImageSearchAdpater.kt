@@ -18,10 +18,18 @@ import kotlinx.coroutines.flow.combine
 
 class ImageSearchAdpater(private val list: ArrayList<ImageResult>) : RecyclerView.Adapter<ImageSearchAdpater.Holder>() {
     interface ItemClick {
-        fun onClick(view: View, position: Int, data: ImageResult)
+        fun onClick(view: View, position: Int, data: ImageResult, like: ImageView)
     }
 
     var itemClick : ItemClick? = null
+
+    fun removeData(position: Int) {
+        if (position < list.size) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeRemoved(position, list.size - position)
+        }
+    }
 
     inner class Holder(binding: ImageItemBinding) : RecyclerView.ViewHolder(binding.root) {
         private val img = binding.ivImage
@@ -50,10 +58,7 @@ class ImageSearchAdpater(private val list: ArrayList<ImageResult>) : RecyclerVie
         list[position].run {
             holder.bind(this)
             holder.itemView.setOnClickListener {
-                if (holder.like.visibility == View.INVISIBLE)
-                    holder.like.visibility = VISIBLE
-                else holder.like.visibility = View.INVISIBLE
-                itemClick?.onClick(it, position, this)
+                itemClick?.onClick(it, position, this, holder.like)
             }
         }
     }

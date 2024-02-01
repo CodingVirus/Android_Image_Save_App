@@ -64,6 +64,13 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
 
     override fun onDataReceived(data: ImageResult) {
         items.add(data)
+        val test = items.distinct().toCollection(ArrayList<ImageResult>())
+        items = test
+        saveData()
+    }
+
+    fun removeData(data: ImageResult) {
+        items.remove(data)
         saveData()
     }
 
@@ -73,8 +80,6 @@ class MainActivity : AppCompatActivity(), FragmentDataListener {
 
         val gson = Gson()
         val json = gson.toJson(items)
-
-        //Log.i("Minyong Json", json)
 
         edit.putString(Constants.DATA_KEY, json)
         edit.apply()

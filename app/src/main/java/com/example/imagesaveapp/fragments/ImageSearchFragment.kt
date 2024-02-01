@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import com.example.imagesaveapp.Constants
@@ -72,14 +73,15 @@ class ImageSearchFragment : Fragment() {
     }
 
     private fun communicateNetWork(query: String?) = lifecycleScope.launch {
-        val test = NetWorkClient.api.getImage(Constants.AUTH_HEADER, query, "accuracy", 1, 20).docs
+        val apiData = NetWorkClient.api.getImage(Constants.AUTH_HEADER, query, "accuracy", 1, 20).docs
 
-        items = test!!
+        items = apiData!!
         items.sortByDescending { it.datetime }
 
         val adapter = ImageSearchAdpater(items)
         adapter.itemClick = object : ImageSearchAdpater.ItemClick {
-            override fun onClick(view: View, position: Int, data: ImageResult) {
+            override fun onClick(view: View, position: Int, data: ImageResult, like: ImageView) {
+                like.visibility = View.VISIBLE
                 listener?.onDataReceived(data)
 
             }

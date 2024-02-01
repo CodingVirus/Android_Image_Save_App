@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.example.imagesaveapp.MainActivity
 import com.example.imagesaveapp.R
 import com.example.imagesaveapp.adapter.ImageSearchAdpater
@@ -37,7 +38,14 @@ class MyImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerView.adapter = ImageSearchAdpater(param1)
+        val adapter = ImageSearchAdpater(param1)
+        adapter.itemClick = object : ImageSearchAdpater.ItemClick {
+            override fun onClick(view: View, position: Int, data: ImageResult, like: ImageView) {
+                adapter.removeData(position)
+                (activity as MainActivity).removeData(data)
+            }
+        }
+        binding.recyclerView.adapter = adapter
     }
 
 
